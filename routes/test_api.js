@@ -14,6 +14,34 @@ router.get('/neo4j_get', async function (req, res, next) {
     return { result };
 })
 
+router.get('/neo4j_create', async function (req, res, next) {
+    let { movie,director } = req.body;
+    let result = await neo4j_calls.create_movie_director(movie,director);
+    res.send({result});
+    return { result };
+    
+})
+
+router.get('/neo4j_read', async function (req, res, next) {
+    let result = await neo4j_calls.sample_read_query();
+    res.send({result});
+    return { result };
+    
+})
+
+router.get('/neo4j_update', async function (req, res, next) {
+    let result = await neo4j_calls.sample_update_query();
+    res.send({result});
+    return { result };
+    
+})
+
+router.get('/neo4j_delete', async function (req, res, next) {
+    let result = await neo4j_calls.sample_delete_query();
+    res.send({result});
+    return { result };
+})
+
 router.post('/neo4j_post', async function (req, res, next) {
     //Passing in "name" parameter in body of POST request
     let { name } = req.body;

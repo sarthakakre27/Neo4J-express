@@ -24,3 +24,80 @@ exports.create_user = async function (name) {
     }
     return user.records[0].get(0).properties.name;
 }
+
+exports.create_movie_director = async function (movie,director) {
+    let session = driver.session();
+    let user = null;
+    try {
+        result = await session.run(`create (movie:Movie{title: '${movie}'}),
+        (director:Person{name: '${director}'}),
+        (director)-[:DIRECTED]->(movie)
+        return movie, director;`, {
+        });
+    }
+    catch (err) {
+        console.error(err);
+        return result;
+    }
+    // console.log(result);
+    console.log(result.records[0].get(0));
+    return result.records[0].get(0).properties.name;
+}
+
+exports.sample_read_query = async function () {
+    let session = driver.session();
+    let user = null;
+    try {
+        result = await session.run(`match (tom:Person{name: "Tom Hanks"})
+        match (tom)-[:HAS_CONTACT]->(person:Person)
+        match (person)-[role:ACTED_IN]->(movie)
+        where person.born >= 1960 and role.earnings > 10000000
+        return person.name, person.born, role.earnings`, {
+        });
+    }
+    catch (err) {
+        console.error(err);
+        return result;
+    }
+    // console.log(result);
+    console.log(result);
+    return result;
+}
+
+exports.sample_update_query = async function () {
+    let session = driver.session();
+    let user = null;
+    try {
+        result = await session.run(`match (actor:Person)-[role:ACTED_IN]->(:Movie)
+        with actor, sum(role.earnings) as total_earnings
+        where total_earnings > 50000000
+        set actor:Rich, actor.total_earnings = total_earnings
+        return actor`, {
+        });
+    }
+    catch (err) {
+        console.error(err);
+        return result;
+    }
+    // console.log(result);
+    console.log(result);
+    return result;
+}
+
+exports.sample_delete_query = async function () {
+    let session = driver.session();
+    let user = null;
+    try {
+        result = await session.run(`match (tom:Person{name: "Tom Hanks"}),
+        (other)-[rel:HAS_CONTACT]->(tom)
+        delete rel;`, {
+        });
+    }
+    catch (err) {
+        console.error(err);
+        return result;
+    }
+    // console.log(result);
+    console.log(result);
+    return result;
+}
